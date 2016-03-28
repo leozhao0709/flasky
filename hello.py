@@ -1,8 +1,19 @@
 from flask import Flask
 from flask import request
+from flask.ext.mail import Mail
+from flask_script import Manager
+import os
 
 app = Flask(__name__)
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('FLASK_MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('FLASK_MAIL_PASSWORD')
 
+mail = Mail(app)
+
+manager = Manager(app)
 
 @app.route('/')
 def index():
@@ -25,4 +36,5 @@ def browser():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    manager.run()
