@@ -1,0 +1,11 @@
+nav {
+  background-color: black;
+}
+
+nav .brand-logo {
+    color: darkgray;
+}
+
+nav ul a {
+    color: darkgrey;
+}
