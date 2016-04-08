@@ -8,6 +8,6 @@ __date__ = '3/27/16'
 __time__ = '1:06 PM'
 
 
-@main.route('/', method=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
 	pass

@@ -10,7 +10,7 @@ __author__ = 'lzhao'
 __date__ = '3/27/16'
 __time__ = '1:07 PM'
 
-app = create_app(os.getenv('FLASK_CONFIG'))
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 Migrate = Migrate(app, db)
 

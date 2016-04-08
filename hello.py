@@ -42,7 +42,6 @@ moment = Moment(app)
 
 def send_async_email(app, msg):
     with app.app_context():
-        print "in another thread"
         mail.send(msg)
 
 
@@ -52,7 +51,7 @@ def send_mail(to, subject, template, **kwargs):
     msg.body = render_template(template + '.txt', **kwargs)
     msg.html = render_template(template + '.html', **kwargs)
     thr = Thread(target=send_async_email, args=[app, msg])
-    thr.run()
+    thr.start()
     return thr
 
 
