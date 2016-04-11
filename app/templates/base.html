@@ -4,26 +4,35 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
 {% endblock %}
 
 {% block body %}
     {% block navbar %}
         <div class="navbar-fixed">
             <nav>
-                <div class="container">
+{#                <div class="container">#}
                     <div class="nav-wrapper">
-                        <a href="#!" class="brand-logo">Flasky</a>
+                        <a href="#!" class="brand-logo left">Flasky</a>
                         <a href="#" data-activates="mobile-demo" class="button-collapse"><i
                                 class="material-icons">menu</i></a>
-                        <ul class="right hide-on-med-and-down">
+                        <ul class="hide-on-med-and-down left">
                             <li><a href="/">Home</a></li>
+                        </ul>
+
+                        <ul class="hide-on-med-and-down right">
+                            {% if current_user.is_authenticated %}
+                                <li class="right"><a href="{{ url_for('auth.logout')}}"> Sign Out</a></li>
+                            {% else %}
+                                <li class="right"><a href="{{ url_for('auth.login')}}"> Sign In</a></li>
+                            {% endif %}
                         </ul>
 
                         <ul class="side-nav" id="mobile-demo">
                             <li><a href="/">Home</a></li>
                         </ul>
                     </div>
-                </div>
+{#                </div>#}
             </nav>
         </div>
     {% endblock %}
@@ -32,7 +41,8 @@
         <div class="container">
             {% for message in get_flashed_messages() %}
                 <div class="card-panel yellow lighten-4">
-                    <button style="background: none; border: none" class="right closeButton" ><i class="material-icons right">close</i></button>
+                    <button style="background: none; border: none" class="right closeButton"><i
+                            class="material-icons right">close</i></button>
                     {{ message }}
                 </div>
             {% endfor %}

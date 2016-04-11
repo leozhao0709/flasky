@@ -1,11 +1,15 @@
 nav {
-  background-color: black;
+    background-color: black;
 }
 
 nav .brand-logo {
     color: darkgray;
+    position: relative;
+    padding-left: 1em;
+    margin-right: 1em;
 }
 
 nav ul a {
     color: darkgrey;
+    font-size: 1.2rem;
 }

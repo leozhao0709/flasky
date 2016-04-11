@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h1>Login</h1>
+    </div>
+    <div class="section">
+        <form method="post">
+            {{ form.csrf_token }}
+            <div class="row">
+                <div class="input-field col s12">
+                    {{ form.email(required=True) }}
+                    {{ form.email.label }}
+                </div>
+                <div class="input-field col s12">
+                    {{ form.password(required=True) }}
+                    {{ form.password.label }}
+                </div>
+                <div class="col s12">
+                    <p>
+                        {{ form.remember_me }}
+                        {{ form.remember_me.label }}
+                    </p>
+                </div>
+                <div class="col s12" style="margin-top: 10px">
+                    <button class="btn waves-effect waves-light input-field" type="submit">
+                        {{ form.submit() }}<i class="material-icons right">send</i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
