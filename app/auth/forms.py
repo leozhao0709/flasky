@@ -6,11 +6,15 @@ __time__ = '9:00 PM'
 
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import Email, DataRequired
+from wtforms.validators import Email, DataRequired, Length, Regexp, EqualTo
 
 
 class LoginForm(Form):
-	email = StringField('Email', validators=[DataRequired(), Email()])
-	password = PasswordField('Password', validators=[DataRequired()])
-	remember_me = BooleanField('keep me logged in')
-	submit = SubmitField('Log In')
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('keep me logged in')
+    submit = SubmitField('Log In')
+
+
+class RegistrationForm(Form):
+    email = StringField('Email', validators=[DataRequired(), Email()])
