@@ -7,7 +7,7 @@
         <h1>Login</h1>
     </div>
     <div class="section">
-        <form method="post">
+        <form method="post" id="loginForm">
             {{ form.csrf_token }}
             <div class="row">
                 <div class="input-field col s12">
@@ -31,5 +31,13 @@
                 </div>
             </div>
         </form>
+    </div>
+{% endblock %}
+
+{% block flashMessage %}
+    <div class="card-panel yellow lighten-4">
+        <button style="background: none; border: none" class="right closeButton"><i
+                class="material-icons right">close</i></button>
+        {{ message }}
     </div>
 {% endblock %}

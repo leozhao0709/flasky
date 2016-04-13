@@ -11,7 +11,7 @@ from wtforms.validators import Email, DataRequired, Length, Regexp, EqualTo
 
 class LoginForm(Form):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(4, 10)])
     remember_me = BooleanField('keep me logged in')
     submit = SubmitField('Log In')
 
