@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 {% endblock %}
 
 {% block page_content %}
     <div class="page-header">
-        <h1>Login</h1>
+        <h1>Register</h1>
     </div>
     <div class="section">
         <form method="post" id="loginForm">
@@ -20,14 +20,16 @@
                     {{ form.email.label }}
                 </div>
                 <div class="input-field col s12">
+                    {{ form.username(required=True)}}
+                    {{ form.username.label }}
+                </div>
+                <div class="input-field col s12">
                     {{ form.password(required=True) }}
                     {{ form.password.label }}
                 </div>
-                <div class="col s12">
-                    <p>
-                        {{ form.remember_me }}
-                        {{ form.remember_me.label }}
-                    </p>
+                <div class="input-field col s12">
+                    {{ form.password2(required=True) }}
+                    {{ form.password2.label }}
                 </div>
                 <div class="col s12" style="margin-top: 10px">
                     <button class="btn waves-effect waves-light input-field" type="submit">
@@ -36,23 +38,5 @@
                 </div>
             </div>
         </form>
-        <p>
-            New user?
-            <a href="{{ url_for('auth.register') }}">
-                Click here to register
-            </a>
-        </p>
     </div>
-{% endblock %}
-
-{% block scripts %}
-    {{ super() }}
-    <script type="text/javascript">
-        $(document).ready(function(){
-            if ({{ form.errors.items()|length}})
-            {
-                $(".flashMessage").removeClass('flashMessage').addClass('flashMessage_error');
-            }
-        })
-    </script>
 {% endblock %}
