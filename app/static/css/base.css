@@ -23,3 +23,7 @@ nav ul a {
 .flashMessage {
     background-color: #fff9c4 ;
 }
+
+.flashMessage_error {
+    background-color: #ee6e73 ;
+}

@@ -37,13 +37,18 @@
 
     {% block content %}
         <div class="container">
-            {% for message in get_flashed_messages() %}
-                <div class="card-panel flashMessage">
-                    <button style="background: none; border: none" class="right closeButton"><i
-                            class="material-icons right">close</i></button>
-                    {{ message }}
-                </div>
-            {% endfor %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="card-panel {{ category }}">
+                            <button style="background: none; border: none" class="right closeButton"><i
+                                    class="material-icons right">close</i></button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
 
             {% block page_content %}{% endblock %}
         </div>
@@ -62,6 +67,7 @@
             $(".closeButton").on('click', function (e) {
                 $(this).parent().remove();
             })
+
         })
     </script>
 {% endblock %}
