@@ -36,6 +36,9 @@
                 </div>
             </div>
         </form>
+        <p>Forgot your password?
+            <a href="/">Click here to reset it</a>.
+        </p>
         <p>
             New user?
             <a href="{{ url_for('auth.register') }}">
@@ -48,9 +51,8 @@
 {% block scripts %}
     {{ super() }}
     <script type="text/javascript">
-        $(document).ready(function(){
-            if ({{ form.errors.items()|length}})
-            {
+        $(document).ready(function () {
+            if ({{ form.errors.items()|length}}) {
                 $(".flashMessage").removeClass('flashMessage').addClass('flashMessage_error');
             }
         })
