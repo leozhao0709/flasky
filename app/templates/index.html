@@ -4,24 +4,24 @@
 {% block page_content %}
     <div class="page-header">
         <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}</h1>
-    {% if not known %}
-        <p>Pleased to meet you!</p>
-    {% else %}
-        <p>Happy to see you again!</p>
-    {% endif %}
+{#    {% if not known %}#}
+{#        <p>Pleased to meet you!</p>#}
+{#    {% else %}#}
+{#        <p>Happy to see you again!</p>#}
+{#    {% endif %}#}
     </div>
-    <div class="section" style="margin-top: 20px">
-        <form method="POST">
-            {{ form.csrf_token }}
-            <div class="row">
-                <div class="input-field col s12">
-                    {{ form.name(required=True)}}
-                    {{ form.name.label}}
-                    <button class="btn waves-effect waves-light" type="submit">
-                        {{ form.submit() }}<i class="material-icons right">send</i>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
+{#    <div class="section" style="margin-top: 20px">#}
+{#        <form method="POST">#}
+{#            {{ form.csrf_token }}#}
+{#            <div class="row">#}
+{#                <div class="input-field col s12">#}
+{#                    {{ form.name(required=True)}}#}
+{#                    {{ form.name.label}}#}
+{#                    <button class="btn waves-effect waves-light" type="submit">#}
+{#                        {{ form.submit() }}<i class="material-icons right">send</i>#}
+{#                    </button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </form>#}
+{#    </div>#}
 {% endblock %}
