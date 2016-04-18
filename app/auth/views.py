@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from app.decorators import permission_required, admin_required
 
 __author__ = 'lzhao'
 __date__ = '4/10/16'
@@ -7,7 +8,7 @@ __time__ = '6:33 PM'
 from flask import render_template, redirect, request, url_for, flash, session, current_app
 from . import auth
 from flask.ext.login import login_user, login_required, logout_user, current_user
-from app.models import User
+from app.models import User, Permission
 from .forms import LoginForm, RegistrationForm, PasswordResetRequestForm, PasswordResetForm
 from app import db
 from app.email import send_email
@@ -70,8 +71,10 @@ def confirm(token):
 
 @auth.before_app_request
 def before_request():
-	if current_user.is_authenticated and not current_user.confirmed and request.endpoint[:5] != 'auth.':
-		return redirect(url_for('auth.unconfirmed'))
+	if current_user.is_authenticated:
+		current_user.ping()
+		if not current_user.confirmed and request.endpoint[:5] != 'auth.':
+			return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/unconfirmed')
@@ -142,3 +145,17 @@ def password_reset(token):
 		for field, errors in form.errors.items():
 			flash(field + ": " + errors[0], 'flashMessage_error')
 	return render_template('auth/reset_password.html', form=form, email=user.email)
+
+
+@auth.route('/admin')
+@login_required
+@admin_required
+def for_admins_only():
+	return "For administrators!"
+
+
+@auth.route('/moderator')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def for_moderators_only():
+	return "For comment moderators!"

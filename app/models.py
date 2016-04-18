@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask.ext.login import UserMixin
+from datetime import datetime
 
 __author__ = 'lzhao'
 __date__ = '3/27/16'
@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
+from flask.ext.login import UserMixin, AnonymousUserMixin
 
 
 class Role(db.Model):
@@ -61,6 +62,11 @@ class User(UserMixin, db.Model):
 	password_hash = db.Column(db.String(128))
 	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 	confirmed = db.Column(db.Boolean, default=False)
+	name = db.Column(db.String(64))
+	location = db.Column(db.String(64))
+	about_me = db.Column(db.TEXT())
+	member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
@@ -115,6 +121,27 @@ class User(UserMixin, db.Model):
 		self.password = new_password
 		db.session.add(self)
 		return True
+
+	def can(self, permissions):
+		return (self.role.permissions & permissions) == permissions
+
+	def is_administrator(self):
+		return self.can(Permission.ADMINISTER)
+
+	def ping(self):
+		self.last_seen = datetime.utcnow()
+		db.session.add(self)
+
+
+class AnonymousUser(AnonymousUserMixin):
+	def can(self, permissions):
+		return False
+
+	def is_administrator(self):
+		return False
+
+
+login_manager.anonymous_user = AnonymousUser
 
 
 @login_manager.user_loader
