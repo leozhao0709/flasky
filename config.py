@@ -31,7 +31,6 @@ class DevelopmentConfig(Config):
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or "mysql://{user}:{password}@{host}/flasky".format(
 		user=os.environ.get("DB_USER"),
 		password=os.environ.get("DB_PASS"), host=os.environ.get("DB_HOST"))
-	print SQLALCHEMY_DATABASE_URI
 
 
 class TestingConfig(Config):

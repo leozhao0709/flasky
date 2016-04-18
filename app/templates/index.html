@@ -5,4 +5,43 @@
     <div class="page-header">
         <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}</h1>
     </div>
+    <div class="section">
+        {% if current_user.can(Permission.WRITE_ARTICLES) %}
+            <form method="post">
+                {{ form.csrf_token }}
+                <div class="row">
+                    <div class="input-field col s12">
+                        {{ form.body(class_="materialize-textarea") }}
+                        {{ form.body.label }}
+                    </div>
+
+                    <div class="col s12" style="margin-top: 10px">
+                        <button class="btn waves-effect waves-light input-field" type="submit">
+                            {{ form.submit() }}<i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    <ul class="posts">
+        {% for post in posts %}
+            <li class="post">
+                <div class="profile-thumbnail">
+                    <a href="{{ url_for('.user', username=post.author.username) }}">
+                        <img class="profile-thumbnail circle">
+                    </a>
+                </div>
+                <div class="post-date">
+                    {{ moment(post.timestamp).fromNow(refresh=True) }}
+                </div>
+                <div class="post-author">
+                    <a href="{{ url_for('.user', username=post.author.username)}}">
+                        {{ post.author.username }}
+                    </a>
+                </div>
+                <div class="post-body">{{ post.body }}</div>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from app.decorators import admin_required
-from app.main.forms import EditProfileForm, EditProfileAdminForm
+from app.main.forms import EditProfileForm, EditProfileAdminForm, PostForm
 from flask.ext.login import login_required, current_user
 from . import main
 from .. import db
-from ..models import User, Role
+from ..models import User, Role, Permission, Post
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, abort, flash
 
@@ -15,7 +15,16 @@ __time__ = '1:06 PM'
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-	return render_template('index.html')
+	form = PostForm()
+	if current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit():
+		post = Post(body=form.body.data, author_id=current_user._get_current_object().id)
+		db.session.add(post)
+		return redirect(url_for('.index'))
+	elif form.errors.items():
+		for field, errors in form.errors.items():
+			flash(field + ": " + errors[0], 'flashMessage_error')
+	posts = Post.query.order_by(Post.timestamp.desc()).all()
+	return render_template('index.html', form=form, posts=posts)
 
 
 @main.route('/user/<username>')
