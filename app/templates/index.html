@@ -11,9 +11,9 @@
             <form method="post">
                 {{ form.csrf_token }}
                 <div class="row">
-                    <div class="input-field col s12">
-                        {{ form.body(class_="materialize-textarea") }}
-                        {{ form.body.label }}
+                    <div class="col s12">
+                        {{ form.body.label(style="font-size:1.5em") }}
+                        {{ form.body(class_="materialize-textarea", rows=30) }}
                     </div>
 
                     <div class="col s12" style="margin-top: 10px">
@@ -29,4 +29,9 @@
     <div class="pagination">
         {{ macros.pagination_widget(pagination, '.index')}}
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ pagedown.include_pagedown() }}
 {% endblock %}
