@@ -15,6 +15,10 @@ class Config:
 	FLASK_MAIL_SUBJECT_PREFIX = '[Flask]'
 	FLASK_MAIL_SENDER = 'Flask Admin <flask@example.com>'
 	FLASK_ADMIN = os.environ.get('FLASK_MAIL_USERNAME')
+	FLASKY_POSTS_PER_PAGE = 20
+	FLASKY_FOLLOWERS_PER_PAGE = 50
+	FLASKY_COMMENTS_PER_PAGE = 30
+	FLASKY_SLOW_DB_QUERY_TIME = 0.5
 
 	@staticmethod
 	def init_app(app):

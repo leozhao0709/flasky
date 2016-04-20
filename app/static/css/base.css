@@ -165,3 +165,7 @@ div.flask-pagedown-preview h3 {
     border-bottom: 1px solid #e0e0e0;
 }
 
+.pagination li.active {
+  background-color: #64b5f6;
+}
+
