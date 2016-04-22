@@ -70,6 +70,14 @@ class User(UserMixin, db.Model):
 	member_since = db.Column(db.DateTime(), default=datetime.utcnow)
 	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
+	followed = db.relationship('Follow', foreign_keys=[Follow.follower_id],
+								backref=db.backref('follower', lazy='joined'), lazy='dynamic',
+								cascade='all, delete-orphan')
+
+	followers = db.relationship('Follow', foreign_keys=[Follow.followed_id],
+								backref=db.backref('followed', lazy='joined'), lazy='dynamic',
+								cascade='all, delete-orphan')
+
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 
 	def __init__(self, **kwargs):
@@ -199,7 +207,15 @@ class Post(db.Model):
 			tags=allowed_tags, strip=True
 		))
 
+
 db.event.listen(Post.body, 'set', Post.on_change_body)
+
+
+class Follow(db.Model):
+	__tablename__ = 'follows'
+	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 login_manager.anonymous_user = AnonymousUser
