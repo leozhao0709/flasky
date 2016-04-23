@@ -70,13 +70,13 @@ class User(UserMixin, db.Model):
 	member_since = db.Column(db.DateTime(), default=datetime.utcnow)
 	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
-	follow = db.relationship('Follow', foreign_keys=[Follow.follower_id],
-							   backref=db.backref('follower', lazy='joined'), lazy='dynamic',
-							   cascade='all, delete-orphan')
-
-	followers = db.relationship('Follow', foreign_keys=[Follow.follow_id],
-								backref=db.backref('follow', lazy='joined'), lazy='dynamic',
-								cascade='all, delete-orphan')
+	# follow = db.relationship('Follow', foreign_keys=[Follow.follower_id],
+	# 						 backref=db.backref('follower', lazy='joined'), lazy='dynamic',
+	# 						 cascade='all, delete-orphan')
+	#
+	# followers = db.relationship('Follow', foreign_keys=[Follow.follow_id],
+	# 							backref=db.backref('follow', lazy='joined'), lazy='dynamic',
+	# 							cascade='all, delete-orphan')
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 
@@ -166,12 +166,21 @@ class User(UserMixin, db.Model):
 			except IntegrityError:
 				db.session.rollback()
 
-	def is_following(self, user):
-		return self.followed.filter_by(followed_id=user.id).first() is not None
-
-	def is_follower(self, user):
-		return self.followers.filter_by(follower_id=user.id).first() is not None
-
+	# def is_following(self, user):
+	# 	return self.follow.filter_by(follow_id=user.id).first() is not None
+	#
+	# def is_follower(self, user):
+	# 	return self.followers.filter_by(follower_id=user.id).first() is not None
+	#
+	# def following(self, user):
+	# 	if not self.is_following(user):
+	# 		f = Follow(follower=self, follow=user)
+	# 		db.session.add(f)
+	#
+	# def unfollow(self, user):
+	# 	f = self.follow.filter_by(follow_id=user.id).first()
+	# 	if f:
+	# 		db.session.delete(f)
 
 class AnonymousUser(AnonymousUserMixin):
 	def can(self, permissions):
@@ -217,11 +226,11 @@ class Post(db.Model):
 db.event.listen(Post.body, 'set', Post.on_change_body)
 
 
-class Follow(db.Model):
-	__tablename__ = 'follows'
-	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-	follow_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+# class Follow(db.Model):
+# 	__tablename__ = 'follows'
+# 	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+# 	follow_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+# 	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 login_manager.anonymous_user = AnonymousUser
