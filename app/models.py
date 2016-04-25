@@ -56,6 +56,13 @@ class Permission:
 	ADMINISTER = 0x80
 
 
+class Follow(db.Model):
+	__tablename__ = 'follows'
+	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	follow_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 class User(UserMixin, db.Model):
 	__tablename__ = 'users'
 	id = db.Column(db.Integer, primary_key=True)
@@ -70,13 +77,18 @@ class User(UserMixin, db.Model):
 	member_since = db.Column(db.DateTime(), default=datetime.utcnow)
 	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
-	# follow = db.relationship('Follow', foreign_keys=[Follow.follower_id],
-	# 						 backref=db.backref('follower', lazy='joined'), lazy='dynamic',
-	# 						 cascade='all, delete-orphan')
-	#
-	# followers = db.relationship('Follow', foreign_keys=[Follow.follow_id],
-	# 							backref=db.backref('follow', lazy='joined'), lazy='dynamic',
-	# 							cascade='all, delete-orphan')
+	follow = db.relationship('Follow', foreign_keys=[Follow.follower_id],
+							 backref=db.backref('follower', lazy='joined'), lazy='dynamic',
+							 cascade='all, delete-orphan')
+
+	# delete-orphan:
+	# if at first, user.blog_list = [blog1, blog2], then you set user.blog_list = [blog2].
+	# if u use delete-orphan, then blog1 will be deleted in Blog table. if not set delete-orphan,
+	# the blog1's user will be set to null but not delete.
+
+	followers = db.relationship('Follow', foreign_keys=[Follow.follow_id],
+								backref=db.backref('follow', lazy='joined'), lazy='dynamic',
+								cascade='all, delete-orphan')
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 
@@ -166,21 +178,22 @@ class User(UserMixin, db.Model):
 			except IntegrityError:
 				db.session.rollback()
 
-	# def is_following(self, user):
-	# 	return self.follow.filter_by(follow_id=user.id).first() is not None
-	#
-	# def is_follower(self, user):
-	# 	return self.followers.filter_by(follower_id=user.id).first() is not None
-	#
-	# def following(self, user):
-	# 	if not self.is_following(user):
-	# 		f = Follow(follower=self, follow=user)
-	# 		db.session.add(f)
-	#
-	# def unfollow(self, user):
-	# 	f = self.follow.filter_by(follow_id=user.id).first()
-	# 	if f:
-	# 		db.session.delete(f)
+	def is_following(self, user):
+		return self.follow.filter_by(follow_id=user.id).first() is not None
+
+	def is_follower(self, user):
+		return self.followers.filter_by(follower_id=user.id).first() is not None
+
+	def following(self, user):
+		if not self.is_following(user):
+			f = Follow(follower=self, follow=user)
+			db.session.add(f)
+
+	def unfollow(self, user):
+		f = self.follow.filter_by(follow_id=user.id).first()
+		if f:
+			db.session.delete(f)
+
 
 class AnonymousUser(AnonymousUserMixin):
 	def can(self, permissions):
@@ -224,14 +237,6 @@ class Post(db.Model):
 
 
 db.event.listen(Post.body, 'set', Post.on_change_body)
-
-
-# class Follow(db.Model):
-# 	__tablename__ = 'follows'
-# 	follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-# 	follow_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-# 	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
 
 login_manager.anonymous_user = AnonymousUser
 
