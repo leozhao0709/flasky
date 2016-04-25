@@ -124,7 +124,7 @@ def follow(username):
 	if current_user.is_following(user):
 		flash('You are already following this user.')
 		return redirect(url_for('.user', username=username))
-	current_user.follow(user)
+	current_user.following(user)
 	flash('You are now following %s.' % username)
 	return redirect(url_for('.user', username=username))
 
