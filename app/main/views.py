@@ -30,6 +30,7 @@ def index():
 		query = current_user.follow_posts
 	else:
 		query = Post.query
+	print "*********show_follow********* is %s"%request.cookies.get('show_follow', 'default')
 	pagination = query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[
 		'FLASKY_POSTS_PER_PAGE'], error_out=False)
 	posts = pagination.items
@@ -185,14 +186,18 @@ def followed_by(username):
 @main.route('/all')
 @login_required
 def show_all():
+	print "2222222222222"
 	resp = make_response(redirect(url_for('.index')))
 	resp.set_cookie('show_follow', '', max_age=30 * 24 * 60 * 60)
+	print "*********show_all********* is %s"%request.cookies.get('show_follow', 'default')
 	return resp
 
 
 @main.route('/follow')
 @login_required
 def show_follow():
+	print "11111111111"
 	resp = make_response(redirect(url_for('.index')))
 	resp.set_cookie('show_follow', '1', max_age=30 * 24 * 60 * 60)
+	print "*********show_follow********* is %s"%request.cookies.get('show_follow', 'default')
 	return resp

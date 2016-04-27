@@ -27,8 +27,14 @@
     </div>
     <div class="row">
         <ul class="tabs">
-            <li {% if not show_follow %} class="active tab col s3" {% else %} class="tab col s3" {% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
-            <li {% if show_follow %} class="active tab col s3" {% else %} class="tab col s3" {% endif %}><a href="{{ url_for('.show_follow') }}">Follow</a></li>
+            <li class=" tab col s3">
+                <a href="{{ url_for('.show_all') }}" {% if not show_followed %} class="active"{% endif %}>All</a>
+            </li>
+            {% if current_user.is_authenticated %}
+                <li class=" tab col s3">
+                    <a href="{{ url_for('.show_follow') }}" {% if show_followed %} class="active"{% endif %}>Follow</a>
+                </li>
+            {% endif %}
         </ul>
         {% include '_posts.html' %}
     </div>
