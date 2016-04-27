@@ -25,13 +25,26 @@
             </form>
         {% endif %}
     </div>
-    {% include '_posts.html' %}
-    <div class="pagination">
-        {{ macros.pagination_widget(pagination, '.index')}}
+    <div class="row">
+        <ul class="tabs">
+            <li {% if not show_follow %} class="active tab col s3" {% else %} class="tab col s3" {% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
+            <li {% if show_follow %} class="active tab col s3" {% else %} class="tab col s3" {% endif %}><a href="{{ url_for('.show_follow') }}">Follow</a></li>
+        </ul>
+        {% include '_posts.html' %}
     </div>
+    {% if pagination %}
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.index') }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
     {{ pagedown.include_pagedown() }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('ul.tabs').tabs();
+        });
+    </script>
 {% endblock %}

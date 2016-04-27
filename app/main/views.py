@@ -5,7 +5,7 @@ from flask.ext.login import login_required, current_user
 from . import main
 from .. import db
 from ..models import User, Role, Permission, Post, Follow
-from flask import render_template, redirect, url_for, abort, flash, request, current_app
+from flask import render_template, redirect, url_for, abort, flash, request, current_app, make_response
 
 __author__ = 'lzhao'
 __date__ = '3/27/16'
@@ -23,10 +23,17 @@ def index():
 		for field, errors in form.errors.items():
 			flash(field + ": " + errors[0], 'flashMessage_error')
 	page = request.args.get('page', 1, type=int)
-	pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[
+	show_follow = False
+	if current_user.is_authenticated:
+		show_follow = bool(request.cookies.get('show_follow', ''))
+	if show_follow:
+		query = current_user.follow_posts
+	else:
+		query = Post.query
+	pagination = query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[
 		'FLASKY_POSTS_PER_PAGE'], error_out=False)
 	posts = pagination.items
-	return render_template('index.html', form=form, posts=posts, pagination=pagination)
+	return render_template('index.html', form=form, posts=posts, show_follow=show_follow, pagination=pagination)
 
 
 @main.route('/user/<username>')
@@ -152,7 +159,8 @@ def followers(username):
 		flash('Invalid user.')
 		return redirect(url_for('.index'))
 	page = request.args.get('page', 1, type=int)
-	pagination = user.followers.paginate(page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'], error_out=False)
+	pagination = user.followers.paginate(page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
+										 error_out=False)
 	follows = [{'user': item.follower, 'timestamp': item.timestamp} for item in pagination.items]
 	return render_template('followers.html', user=user, title="Followers of", endpoint='.followers',
 						   pagination=pagination, follows=follows)
@@ -172,3 +180,19 @@ def followed_by(username):
 			   for item in pagination.items]
 	return render_template('followers.html', user=user, title="Followed by",
 						   endpoint='.followed_by', pagination=pagination, follows=follows)
+
+
+@main.route('/all')
+@login_required
+def show_all():
+	resp = make_response(redirect(url_for('.index')))
+	resp.set_cookie('show_follow', '', max_age=30 * 24 * 60 * 60)
+	return resp
+
+
+@main.route('/follow')
+@login_required
+def show_follow():
+	resp = make_response(redirect(url_for('.index')))
+	resp.set_cookie('show_follow', '1', max_age=30 * 24 * 60 * 60)
+	return resp
