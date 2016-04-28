@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Index{% endblock %}
 {% import "_macros.html" as macros %}
+{% import "_posts.html" as macros_posts %}
 
 {% block page_content %}
     <div class="page-header">
@@ -28,15 +29,23 @@
     <div class="row">
         <ul class="tabs">
             <li class=" tab col s3">
-                <a href="{{ url_for('.show_all') }}" {% if not show_followed %} class="active"{% endif %}>All</a>
+                <a href="#showAll" {% if not current_user.is_authenticated %} class="active"{% endif %}>All</a>
             </li>
             {% if current_user.is_authenticated %}
                 <li class=" tab col s3">
-                    <a href="{{ url_for('.show_follow') }}" {% if show_followed %} class="active"{% endif %}>Follow</a>
+                    <a href="#showFollow" class="active">Follow</a>
                 </li>
             {% endif %}
         </ul>
-        {% include '_posts.html' %}
+        {#        {% include '_posts.html' %}#}
+        <div id="showAll">
+            {{ macros_posts.posts_widget(posts_show_all, moment, current_user) }}
+        </div>
+        {% if current_user.is_authenticated %}
+            <div id="showFollow">
+                {{ macros_posts.posts_widget(posts_show_follow, moment, current_user) }}
+            </div>
+        {% endif %}
     </div>
     {% if pagination %}
         <div class="pagination">

@@ -23,18 +23,19 @@ def index():
 		for field, errors in form.errors.items():
 			flash(field + ": " + errors[0], 'flashMessage_error')
 	page = request.args.get('page', 1, type=int)
-	show_follow = False
-	if current_user.is_authenticated:
-		show_follow = bool(request.cookies.get('show_follow', ''))
-	if show_follow:
-		query = current_user.follow_posts
+	if not current_user.is_authenticated:
+		pagination_show_follow = None
+		posts_show_follow = None
 	else:
-		query = Post.query
-	print "*********show_follow********* is %s"%request.cookies.get('show_follow', 'default')
-	pagination = query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[
+		pagination_show_follow = current_user.follow_posts.order_by(Post.timestamp.desc()).paginate(page, per_page=
+		current_app.config[
+			'FLASKY_POSTS_PER_PAGE'], error_out=False)
+		posts_show_follow = pagination_show_follow.items
+	pagination_show_all = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[
 		'FLASKY_POSTS_PER_PAGE'], error_out=False)
-	posts = pagination.items
-	return render_template('index.html', form=form, posts=posts, show_follow=show_follow, pagination=pagination)
+	posts_show_all = pagination_show_all.items
+	return render_template('index.html', form=form, posts_show_all=posts_show_all, posts_show_follow=posts_show_follow,
+						   pagination_show_all=pagination_show_all, pagination_show_follow=pagination_show_follow)
 
 
 @main.route('/user/<username>')
@@ -181,23 +182,3 @@ def followed_by(username):
 			   for item in pagination.items]
 	return render_template('followers.html', user=user, title="Followed by",
 						   endpoint='.followed_by', pagination=pagination, follows=follows)
-
-
-@main.route('/all')
-@login_required
-def show_all():
-	print "2222222222222"
-	resp = make_response(redirect(url_for('.index')))
-	resp.set_cookie('show_follow', '', max_age=30 * 24 * 60 * 60)
-	print "*********show_all********* is %s"%request.cookies.get('show_follow', 'default')
-	return resp
-
-
-@main.route('/follow')
-@login_required
-def show_follow():
-	print "11111111111"
-	resp = make_response(redirect(url_for('.index')))
-	resp.set_cookie('show_follow', '1', max_age=30 * 24 * 60 * 60)
-	print "*********show_follow********* is %s"%request.cookies.get('show_follow', 'default')
-	return resp
