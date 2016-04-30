@@ -1,8 +1,35 @@
 {% extends "base.html" %}
+{% import "_macros.html" as macros %}
 {% import "_posts.html" as macros_posts %}
 {% block title %}Post{% endblock %}
 
 {% block page_content %}
 {#    {% include '_posts.html' %}#}
     {{ macros_posts.posts_widget(posts, moment, current_user) }}
+    <h4 id="comments">Comments</h4>
+    {% if current_user.can(Permission.COMMENT) %}
+        <div class="comment-form">
+            <form method="post">
+                {{ form.csrf_token }}
+                <div class="row">
+                    <div class="col s12">
+                        {{ form.body.label(style="font-size:1.2em") }}
+                        {{ form.body(class_="materialize-textarea") }}
+                    </div>
+
+                    <div class="col s12" style="margin-top: 10px">
+                        <button class="btn waves-effect waves-light input-field" type="submit">
+                            {{ form.submit() }}<i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    {% if pagination %}
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
+        </div>
+    {% endif %}
 {% endblock %}
