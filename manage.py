@@ -16,19 +16,33 @@ Migrate = Migrate(app, db)
 
 
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role, Post=Post, Follow=Follow)
+	return dict(app=app, db=db, User=User, Role=Role, Post=Post, Follow=Follow)
 
 
 @manager.command
 def test():
-    """run the unit tests."""
-    import unittest
-    tests = unittest.TestLoader().discover('tests')
-    unittest.TextTestRunner(verbosity=2).run(tests)
+	"""run the unit tests."""
+	import unittest
+	tests = unittest.TestLoader().discover('tests')
+	unittest.TextTestRunner(verbosity=2).run(tests)
 
+
+@manager.command
+def deploy():
+	"""run deployment tasks."""
+	from flask_migrate import upgrade
+
+	# migrate database to latest revision
+	upgrade()
+
+	# create user roles
+	Role.insert_roles()
+
+	# create self-follows for all users
+	User.add_self_follows()
 
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
-    manager.run()
+	manager.run()

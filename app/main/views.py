@@ -6,6 +6,7 @@ from . import main
 from .. import db
 from ..models import User, Role, Permission, Post, Follow, Comment
 from flask import render_template, redirect, url_for, abort, flash, request, current_app, make_response
+from flask_sqlalchemy import get_debug_queries
 
 __author__ = 'lzhao'
 __date__ = '3/27/16'
@@ -199,3 +200,12 @@ def followed_by(username):
 			   for item in pagination.items]
 	return render_template('followers.html', user=user, title="Followed by",
 						   endpoint='.followed_by', pagination=pagination, follows=follows)
+
+
+@main.after_app_request
+def after_request(response):
+	for query in get_debug_queries():
+		if query.duration >= current_app.config["FLASKY_SLOW_DB_QUERY_TIME"]:
+			current_app.logger.warning('Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' % (
+			query.statement, query.parameters, query.duration, query.context))
+	return response

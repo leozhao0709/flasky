@@ -274,7 +274,7 @@ class Comment(db.Model):
 		))
 
 
-db.event.listen(Post.body, 'set', Comment.on_change_body)
+db.event.listen(Comment.body, 'set', Comment.on_change_body)
 
 login_manager.anonymous_user = AnonymousUser
 
