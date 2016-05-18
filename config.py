@@ -14,7 +14,7 @@ class Config:
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	FLASK_MAIL_SUBJECT_PREFIX = '[Flask]'
 	FLASK_MAIL_SENDER = 'Flask Admin <flask@example.com>'
-	FLASK_ADMIN = os.environ.get('FLASK_MAIL_USERNAME')
+	FLASK_ADMIN = os.environ.get('MAIL_USERNAME')
 	FLASKY_POSTS_PER_PAGE = 20
 	FLASKY_FOLLOWERS_PER_PAGE = 50
 	FLASKY_COMMENTS_PER_PAGE = 30
@@ -32,8 +32,8 @@ class DevelopmentConfig(Config):
 	MAIL_SERVER = 'smtp.googlemail.com'
 	MAIL_PORT = 587
 	MAIL_USE_TLS = True
-	MAIL_USERNAME = os.environ.get('FLASK_MAIL_USERNAME')
-	MAIL_PASSWORD = os.environ.get('FLASK_MAIL_PASSWORD')
+	MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or "mysql://{user}:{password}@{host}/flasky".format(
 		user=os.environ.get("DB_USER"),
 		password=os.environ.get("DB_PASS"), host=os.environ.get("DB_HOST"))
